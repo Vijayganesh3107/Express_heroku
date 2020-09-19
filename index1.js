@@ -4,12 +4,24 @@ const app = express();
 const bodyparser = require("body-parser");
 app.use(bodyparser.json());
 const mongoClient = mongodb.MongoClient;
-const url = "mongodb://localhost:27017";
+const url = "mongodb+srv://admin:chennai7@cluster0.whuqd.mongodb.net/test";
+// const url = "mongodb://localhost:27017";
 
 app.post("/roommaster", (req, res) => {
   mongoClient.connect(url, { useUnifiedTopology: true }, (err, connection) => {
     var db = connection.db("assignment");
     var cursor = db.collection("roommaster").insertOne(req.body);
+    cursor.then((data) => {
+      res.json(data);
+      connection.close();
+    });
+  });
+});
+
+app.get("/get", (req, res) => {
+  mongoClient.connect(url, { useUnifiedTopology: true }, (err, connection) => {
+    var db = connection.db("assignment");
+    var cursor = db.collection("roommaster").find().toArray();
     cursor.then((data) => {
       res.json(data);
       connection.close();
@@ -78,7 +90,7 @@ app.get("/roombookinghistory", (req, res) => {
       .toArray();
     cursor.then((data) => {
       connection.close();
-      div.inner = res.json(data);
+      res.json(data);
     });
   });
 });
